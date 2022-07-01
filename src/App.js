@@ -27,7 +27,7 @@ class App extends React.Component {
             <Favorites />
           </Route>
 
-          <Route path="/profile">
+          <Route path="/profile" exact>
             <Profile />
           </Route>
 
@@ -35,7 +35,7 @@ class App extends React.Component {
             <ProfileEdit />
           </Route>
 
-          <Route path="*">
+          <Route path="">
             <NotFound />
           </Route>
         </Switch>
