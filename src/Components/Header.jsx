@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { getUser } from '../services/userAPI';
 import Loading from './Loading';
 
@@ -34,6 +35,12 @@ render() {
             User:
             {' '}
             { user }
+            <menu>
+              <Link to="/search" data-testid="link-to-search" />
+              <Link to="/favorites" data-testid="link-to-favorites" />
+              <Link to="/profile" data-testid="link-to-profile" />
+            </menu>
+
           </div>
         )}
 
