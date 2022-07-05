@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import getMusics from '../services/musicsAPI';
 import Header from '../Components/Header';
 import MusicCard from '../Components/MusicCard';
@@ -23,7 +24,6 @@ class Album extends React.Component {
     const { match } = this.props;
     const { params } = match;
     const getMusic = await getMusics(params.id);
-    console.log(getMusic);
     this.setState({
       artistName: getMusic[0].artistName,
       albumName: getMusic[0].collectionName,
@@ -57,6 +57,7 @@ class Album extends React.Component {
                 <MusicCard
                   trackName={ track.trackName }
                   previewUrl={ track.previewUrl }
+                  trackId={ track.trackId }
                   key={ track.trackNumber }
                 />
               ))}
@@ -67,5 +68,22 @@ class Album extends React.Component {
     );
   }
 }
+
+/* Album.prototype = {
+  match: PropTypes.string.isRequired,
+  params: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+}; */
+
+Album.propTypes = {
+  match: PropTypes.shape({
+    path: PropTypes.string,
+    url: PropTypes.string,
+    isExact: PropTypes.bool,
+    params: PropTypes.shape({
+      id: PropTypes.string,
+    }),
+  }).isRequired,
+};
 
 export default Album;
