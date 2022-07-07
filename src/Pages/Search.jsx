@@ -43,7 +43,7 @@ class Search extends React.Component {
       isLoading: true,
     }));
     const albumsFound = await searchAlbumsAPI(search);
-    console.log(albumsFound);
+    // console.log(albumsFound);
     this.setState(({
       searchAnswer: albumsFound,
       isLoading: false,

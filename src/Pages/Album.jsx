@@ -1,9 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import getMusics from '../services/musicsAPI';
 import Header from '../Components/Header';
-import MusicCard from '../Components/MusicCard';
 import Loading from '../Components/Loading';
+import MusicCard from '../Components/MusicCard';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
+import getMusics from '../services/musicsAPI';
 
 class Album extends React.Component {
   constructor() {
@@ -11,79 +11,73 @@ class Album extends React.Component {
     this.state = {
       artistName: '',
       albumName: '',
-      musics: '',
-      getMusicComplete: false,
+      musicList: [],
+      isLoading: false,
+      favoriteMusics: [],
     };
   }
 
-  async componentDidMount() {
-    this.fetchGetMusics();
+  componentDidMount() {
+    this.fetchMusicsApi();
+    this.fetchGetFavoriteSongs();
   }
 
-  fetchGetMusics = async () => {
+  fetchGetFavoriteSongs = async () => {
+    // console.log('iniciei');
+    this.setState({ isLoading: true });
+    const favoriteSongs = await getFavoriteSongs();
+    console.log(favoriteSongs);
+    this.setState({
+      favoriteMusics: favoriteSongs,
+      isLoading: false,
+    });
+  }
+
+  fetchMusicsApi = async () => {
     const { match } = this.props;
     const { params } = match;
-    const getMusic = await getMusics(params.id);
+    const { id } = params;
+    const musics = await getMusics(id);
+    console.log(musics);
     this.setState({
-      artistName: getMusic[0].artistName,
-      albumName: getMusic[0].collectionName,
-      musics: getMusic.slice(1),
-      getMusicComplete: true,
+      artistName: musics[0].artistName,
+      albumName: musics[0].collectionName,
+      musicList: musics.slice(1),
     });
   }
 
   render() {
-    const { artistName, albumName, musics, getMusicComplete } = this.state;
+    const { artistName, albumName, musicList, isLoading, favoriteMusics } = this.state;
     return (
       <div data-testid="page-album">
         <Header />
-        <div>
-          <h1>Album</h1>
-          <h2 data-testid="artist-name">
-            Artista:
-            {' '}
-            { artistName }
-          </h2>
-          <h3 data-testid="album-name">
-            Album:
-            {' '}
-            { albumName }
-          </h3>
-        </div>
-        <div>
-          {getMusicComplete ? (
-            <div>
-              {musics.map((track) => (
+        {isLoading ? <Loading /> : (
+          <div>
+            <h1>Album</h1>
+            <h2 data-testid="artist-name">{artistName}</h2>
+            <h3 data-testid="album-name">
+              Album:
+              {' '}
+              {albumName}
+            </h3>
+            <div className="music-card-container">
+              {musicList.map((track) => (
                 <MusicCard
+                  key={ track.trackId }
                   trackName={ track.trackName }
                   previewUrl={ track.previewUrl }
+                  artwork={ track.artworkUrl100 }
                   trackId={ track.trackId }
-                  key={ track.trackNumber }
+                  musicInfo={ track }
+                  favoriteMusics={ favoriteMusics }
                 />
               ))}
             </div>
-          ) : <Loading />}
-        </div>
+          </div>
+        )}
       </div>
     );
   }
 }
-
-/* Album.prototype = {
-  match: PropTypes.string.isRequired,
-  params: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-}; */
-
-Album.propTypes = {
-  match: PropTypes.shape({
-    path: PropTypes.string,
-    url: PropTypes.string,
-    isExact: PropTypes.bool,
-    params: PropTypes.shape({
-      id: PropTypes.string,
-    }),
-  }).isRequired,
-};
 
 export default Album;
