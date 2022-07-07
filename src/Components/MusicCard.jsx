@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { addSong, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
@@ -18,7 +19,8 @@ class MusicCard extends Component {
   alreadyFavorited = () => {
     const { musicInfo, favoriteMusics } = this.props;
     const isFavorite = favoriteMusics.some(
-      ({ trackId }) => trackId === musicInfo.trackId);
+      ({ trackId }) => trackId === musicInfo.trackId,
+    );
     this.setState({
       favorited: isFavorite,
     });
@@ -76,4 +78,19 @@ class MusicCard extends Component {
     );
   }
 }
+
+MusicCard.propTypes = {
+  trackName: PropTypes.string.isRequired,
+  previewUrl: PropTypes.string.isRequired,
+  trackId: PropTypes.number.isRequired,
+  artwork: PropTypes.string.isRequired,
+  musicInfo: PropTypes.objectOf(PropTypes.any).isRequired,
+  favoriteMusics: PropTypes.arrayOf(PropTypes.shape({
+    trackName: PropTypes.string,
+    previewUrl: PropTypes.string,
+    trackId: PropTypes.number,
+    trackImg: PropTypes.string,
+  })).isRequired,
+};
+
 export default MusicCard;
